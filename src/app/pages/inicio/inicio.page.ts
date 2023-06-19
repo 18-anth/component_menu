@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild} from '@angular/core';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { Component, OnInit } from '@angular/core';
+import { MenuController } from '@ionic/angular';
+import { Observable } from 'rxjs';
+import { ComponentsModule } from '../../components/components.module';
+import { DataService } from '../../services/data.service';
 
-import { IonModal } from '@ionic/angular';
-import { OverlayEventDetail } from '@ionic/core/components';
 
 interface Componente {
   icon: string;
@@ -17,41 +18,13 @@ interface Componente {
 
 export class InicioPage implements OnInit {
 
-  componentes: Componente[] = [
-    {
-      icon: 'american-football-outline',
-      name: 'Action Sheet',
-      redirectTo: '/action-sheet'
-    },
-    {
-      icon: 'alert-circle-outline',
-      name: 'Alert',
-      redirectTo: '/alert'
-    },
-  ];
-  constructor() { }
+  componentes!: Observable<Componente[]>;
+  constructor(private menuCtrl: MenuController,
+    private dataService: DataService) { }
   ngOnInit() {
+    this.componentes = this.dataService.getMenuOpts();
   }
-
-  @ViewChild(IonModal)
-  modal!: IonModal;
-
-  message = 'Your Name';
-  name!: string;
-
-  cancel() {
-    this.modal.dismiss(null, 'cancel');
+  mostrarMenu() {
+    this.menuCtrl.open('first');
   }
-
-  confirm() {
-    this.modal.dismiss(this.name, 'confirm');
-  }
-
-  onWillDismiss(event: Event) {
-    const ev = event as CustomEvent<OverlayEventDetail<string>>;
-    if (ev.detail.role === 'confirm') {
-      this.message = `${ev.detail.data}`;
-    }
-  }
-
 }
